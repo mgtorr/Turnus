@@ -1,0 +1,454 @@
+{
+  "metadata": {
+    "last_updated": "2026-01-04",
+    "version": "2.0.0",
+    "region": "Norway",
+    "description": "Versioned AML/HTA compliance rules for Norwegian health sector scheduling"
+  },
+
+  "aml_baseline": {
+    "daily_rest": {
+      "standard_hours": 11.0,
+      "absolute_min_with_agreement": 8.0,
+      "reference": "AML § 10-8 (1)",
+      "description": "Minimum 11 hours continuous rest per 24-hour period"
+    },
+    "weekly_rest": {
+      "standard_hours": 35.0,
+      "absolute_min_with_agreement": 28.0,
+      "reference": "AML § 10-8 (2)",
+      "rolling_window_hours": 168,
+      "description": "Minimum 35 hours continuous rest per 7-day period, preferably including Sunday"
+    },
+    "max_hours": {
+      "daily": 9.0,
+      "weekly": 40.0,
+      "reference": "AML § 10-4",
+      "description": "Standard maximum working hours without overtime"
+    }
+  },
+
+  "aml_overtime": {
+    "reference": "AML § 10-6",
+    "limits": {
+      "per_24h": {
+        "max_hours": 13.0,
+        "description": "Maximum total work hours in any 24-hour period"
+      },
+      "per_week": {
+        "max_overtime_hours": 10.0,
+        "description": "Maximum overtime beyond normal weekly hours"
+      },
+      "per_4_weeks": {
+        "max_overtime_hours": 25.0,
+        "description": "Rolling 4-week overtime cap"
+      },
+      "per_year": {
+        "max_overtime_hours": 200.0,
+        "with_union_agreement": 300.0,
+        "with_arbeidstilsynet_approval": 400.0,
+        "description": "Annual overtime limits by agreement level"
+      }
+    },
+    "conditions": {
+      "requires_exceptional_need": true,
+      "requires_consultation_over_25h_4weeks": true
+    }
+  },
+
+  "aml_night_work": {
+    "reference": "AML § 10-11",
+    "definition": {
+      "night_period_start": "21:00",
+      "night_period_end": "06:00",
+      "min_night_hours_for_classification": 3.0,
+      "description": "Work is classified as night work if at least 3 hours fall within 21:00-06:00"
+    },
+    "restrictions": {
+      "max_hours_per_24h": 8.0,
+      "max_average_hours_per_24h_over_4_weeks": 8.0,
+      "prohibited_groups": ["pregnant_workers", "minors"],
+      "description": "Night workers limited to 8-hour average over 4 weeks"
+    },
+    "health_assessment": {
+      "required_interval_years": 2,
+      "free_of_charge": true,
+      "right_to_day_work_if_health_issues": true,
+      "description": "Biennial health checks required; transfer to day work if health affected"
+    },
+    "consecutive_nights": {
+      "recommended_max": 3,
+      "absolute_max_without_agreement": 5,
+      "description": "Consecutive night shifts should be minimized"
+    }
+  },
+
+  "aml_psychosocial": {
+    "reference": "AML § 4-3",
+    "description": "Requirements for psychosocial work environment",
+    "employer_obligations": {
+      "prevent_harassment": true,
+      "prevent_violence": true,
+      "ensure_dignity": true,
+      "enable_professional_development": true
+    },
+    "workload_indicators": {
+      "high_time_pressure": {
+        "threshold_overtime_hours_per_month": 20,
+        "description": "Flag when monthly overtime exceeds threshold"
+      },
+      "unpredictable_schedule": {
+        "threshold_schedule_changes_per_month": 5,
+        "description": "Flag frequent short-notice schedule changes"
+      },
+      "isolation": {
+        "threshold_solo_shifts_per_week": 4,
+        "description": "Flag workers frequently working alone"
+      },
+      "insufficient_recovery": {
+        "threshold_short_rest_events_per_month": 3,
+        "description": "Flag repeated reduced rest periods"
+      }
+    },
+    "burnout_risk_factors": {
+      "consecutive_long_shifts": {
+        "trigger_days": 5,
+        "shift_min_hours": 10
+      },
+      "weekend_work_frequency": {
+        "trigger_weekends_per_month": 3
+      },
+      "split_shifts_frequency": {
+        "trigger_per_week": 3
+      }
+    }
+  },
+
+  "hta_variants": {
+    "KS_2024_2026": {
+      "name": "Kommunesektorens Hovedtariffavtale",
+      "sector": "municipal",
+      "description": "Applies to municipalities, county councils, and municipal enterprises",
+      "work_week_hours": {
+        "day_only": 37.5,
+        "shift_rotation_two_shift": 35.5,
+        "shift_rotation_three_shift": 33.6,
+        "continuous_shifts_including_sunday": 33.6
+      },
+      "sunday_rules": {
+        "max_consecutive_sundays": 1,
+        "exceptions_require_agreement": true,
+        "reference": "HTA Kap 1 § 4"
+      },
+      "inconvenient_hours_compensation": {
+        "evening_start": "17:00",
+        "night_start": "21:00",
+        "saturday_start": "00:00",
+        "sunday_all_day": true
+      }
+    },
+    "Spekter_Helse_2024_2026": {
+      "name": "Spekter Helseforetak",
+      "sector": "health_enterprise",
+      "description": "Applies to regional health authorities and hospital trusts",
+      "work_week_hours": {
+        "day_only": 37.5,
+        "shift_rotation_two_shift": 35.5,
+        "shift_rotation_three_shift": 33.6
+      },
+      "sunday_rules": {
+        "max_consecutive_sundays": 2,
+        "max_sundays_per_year": 22,
+        "reference": "A2 § 4.3"
+      },
+      "special_provisions": {
+        "f1_free_weekend": {
+          "enabled": true,
+          "min_hours_fri_to_mon": 55,
+          "description": "F1 weekend requires 55h continuous rest Friday 18:00 to Monday"
+        },
+        "f2_free_weekend": {
+          "enabled": true,
+          "min_hours_sat_to_mon": 35,
+          "description": "F2 weekend requires 35h rest Saturday to Monday"
+        }
+      }
+    },
+    "Virke_HUK_2024_2026": {
+      "name": "Virke HUK-avtalen",
+      "sector": "private_health_social",
+      "description": "Applies to private health and social services (ideelle organisasjoner)",
+      "work_week_hours": {
+        "day_only": 37.5,
+        "shift_rotation_two_shift": 35.5,
+        "shift_rotation_three_shift": 33.6
+      },
+      "sunday_rules": {
+        "max_consecutive_sundays": 2,
+        "reference": "Virke HUK § 4.2"
+      }
+    },
+    "State_2024_2026": {
+      "name": "Statens Hovedtariffavtale",
+      "sector": "state",
+      "description": "Applies to state employees",
+      "work_week_hours": {
+        "day_only": 37.5,
+        "shift_rotation": 35.5,
+        "continuous_operation": 33.6
+      },
+      "sunday_rules": {
+        "max_consecutive_sundays": 2,
+        "reference": "HTA Staten § 7"
+      }
+    }
+  },
+
+  "compensatory_rest": {
+    "reference": "AML § 10-8 (3)",
+    "description": "Rules for tracking and compensating reduced rest periods",
+    "daily_rest_debt": {
+      "applies_when_rest_below_hours": 11.0,
+      "min_rest_for_debt_accrual": 8.0,
+      "compensation_rules": {
+        "must_compensate_within_days": 14,
+        "compensation_ratio": 1.0,
+        "description": "Hours below 11h must be added to next available rest period"
+      },
+      "example": {
+        "scenario": "Worker gets 8h rest instead of 11h",
+        "debt_hours": 3.0,
+        "resolution": "Next rest period must be 14h (11h + 3h debt)"
+      }
+    },
+    "weekly_rest_debt": {
+      "applies_when_rest_below_hours": 35.0,
+      "min_rest_for_debt_accrual": 28.0,
+      "compensation_rules": {
+        "must_compensate_within_weeks": 4,
+        "compensation_ratio": 1.0,
+        "description": "Hours below 35h must be added to subsequent weekly rest"
+      }
+    },
+    "tracking": {
+      "max_accumulated_debt_hours": 24.0,
+      "alert_threshold_hours": 12.0,
+      "description": "System should alert when accumulated debt exceeds threshold"
+    }
+  },
+
+  "shift_codes": {
+    "description": "Standard Norwegian shift code mappings for GAT and similar systems",
+    "day_shifts": {
+      "D": {
+        "name": "Dagvakt",
+        "start": "07:00",
+        "end": "15:00",
+        "duration_hours": 8.0
+      },
+      "D1": {
+        "name": "Dagvakt tidlig",
+        "start": "06:30",
+        "end": "14:30",
+        "duration_hours": 8.0
+      },
+      "D2": {
+        "name": "Dagvakt sen",
+        "start": "07:30",
+        "end": "15:30",
+        "duration_hours": 8.0
+      },
+      "DL": {
+        "name": "Dagvakt lang",
+        "start": "07:00",
+        "end": "19:00",
+        "duration_hours": 12.0
+      }
+    },
+    "evening_shifts": {
+      "A": {
+        "name": "Aftenvakt",
+        "start": "15:00",
+        "end": "23:00",
+        "duration_hours": 8.0
+      },
+      "A1": {
+        "name": "Aftenvakt tidlig",
+        "start": "14:00",
+        "end": "22:00",
+        "duration_hours": 8.0
+      },
+      "A2": {
+        "name": "Aftenvakt sen",
+        "start": "15:30",
+        "end": "23:30",
+        "duration_hours": 8.0
+      },
+      "AL": {
+        "name": "Aftenvakt lang",
+        "start": "14:00",
+        "end": "23:00",
+        "duration_hours": 9.0
+      }
+    },
+    "night_shifts": {
+      "N": {
+        "name": "Nattevakt",
+        "start": "23:00",
+        "end": "07:00",
+        "duration_hours": 8.0
+      },
+      "N1": {
+        "name": "Nattevakt tidlig",
+        "start": "22:00",
+        "end": "06:30",
+        "duration_hours": 8.5
+      },
+      "N2": {
+        "name": "Nattevakt kort",
+        "start": "23:00",
+        "end": "06:00",
+        "duration_hours": 7.0
+      },
+      "N3": {
+        "name": "Nattevakt lang",
+        "start": "21:00",
+        "end": "07:00",
+        "duration_hours": 10.0
+      },
+      "NL": {
+        "name": "Nattevakt helg",
+        "start": "21:00",
+        "end": "08:00",
+        "duration_hours": 11.0
+      }
+    },
+    "special_codes": {
+      "F": {
+        "name": "Fridag",
+        "type": "off",
+        "description": "Scheduled day off"
+      },
+      "FE": {
+        "name": "Ferie",
+        "type": "vacation",
+        "description": "Vacation day"
+      },
+      "S": {
+        "name": "Syk",
+        "type": "sick",
+        "description": "Sick leave"
+      },
+      "P": {
+        "name": "Permisjon",
+        "type": "leave",
+        "description": "Leave of absence"
+      },
+      "K": {
+        "name": "Kurs",
+        "type": "training",
+        "description": "Training/course day"
+      },
+      "X": {
+        "name": "Ekstra",
+        "type": "extra",
+        "description": "Extra shift - requires manual time entry"
+      },
+      "V": {
+        "name": "Vikar",
+        "type": "substitute",
+        "description": "Substitute/agency shift"
+      }
+    },
+    "unknown_code_handling": {
+      "action": "MAPPING_REQUIRED",
+      "description": "Unknown codes must be flagged for manual mapping - never guess"
+    }
+  },
+
+  "fatigue_logic": {
+    "description": "Research-backed coefficients for burnout risk calculation",
+    "coefficients": {
+      "short_rest_penalty": {
+        "value": 1.94,
+        "applies_when": "rest_hours < 11",
+        "reference": "AML § 10-8 violation"
+      },
+      "backward_rotation_penalty": {
+        "value": 0.49,
+        "applies_when": "Night->Evening or Evening->Day transition",
+        "reference": "Circadian disruption research"
+      },
+      "consecutive_night_penalty": {
+        "value": 0.68,
+        "applies_when": "Each night after the first consecutive",
+        "reference": "Sleep debt accumulation"
+      },
+      "base_night_penalty": {
+        "value": 0.22,
+        "applies_when": "Any night shift",
+        "reference": "Standard night work health risk"
+      },
+      "long_shift_penalty": {
+        "value": 0.35,
+        "applies_when": "shift_hours > 10",
+        "reference": "Extended shift fatigue"
+      },
+      "quick_return_penalty": {
+        "value": 0.85,
+        "applies_when": "rest_hours < 9",
+        "reference": "Severe rest deficit"
+      },
+      "weekend_work_penalty": {
+        "value": 0.15,
+        "applies_when": "Saturday or Sunday shift",
+        "reference": "Social rhythm disruption"
+      }
+    },
+    "risk_thresholds": {
+      "low": {
+        "min": 0.0,
+        "max": 3.0,
+        "color": "green",
+        "action": "Monitor"
+      },
+      "medium": {
+        "min": 3.1,
+        "max": 6.0,
+        "color": "yellow",
+        "action": "Review schedule"
+      },
+      "high": {
+        "min": 6.1,
+        "max": 10.0,
+        "color": "orange",
+        "action": "Immediate schedule adjustment required"
+      },
+      "critical": {
+        "min": 10.1,
+        "max": 100.0,
+        "color": "red",
+        "action": "Mandatory intervention - AML violation likely"
+      }
+    },
+    "calculation_period_days": 28
+  },
+
+  "validation_rules": {
+    "data_quality_flags": {
+      "MAPPING_REQUIRED": "Unknown shift code encountered",
+      "OVERLAP_DETECTED": "Shift times overlap with another entry",
+      "IMPOSSIBLE_HOURS": "Shift duration exceeds 24 hours",
+      "MISSING_EMPLOYEE_ID": "Employee identifier missing",
+      "FUTURE_DATE_WARNING": "Shift date is more than 90 days ahead",
+      "MANUAL_ENTRY_REQUIRED": "Free-text entry requires manual verification"
+    },
+    "known_noise_patterns": [
+      "Syk - ringt",
+      "Byttet vakt",
+      "Møte",
+      "Annet",
+      "Se kommentar"
+    ]
+  }
+}
