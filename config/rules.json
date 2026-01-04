@@ -1,0 +1,122 @@
+{
+  "version": "2026.1",
+  "effective_date": "2026-01-01",
+  "jurisdiction": "NO",
+
+  "aml": {
+    "section_10_8": {
+      "name": "Daglig og ukentlig hvile",
+      "daily_rest": {
+        "threshold_hours": 11,
+        "window_hours": 24,
+        "description": "Arbeidstaker skal ha minst 11 timer sammenhengende arbeidsfri i løpet av 24 timer"
+      },
+      "weekly_rest": {
+        "threshold_hours": 35,
+        "window_hours": 168,
+        "description": "Arbeidstaker skal ha en sammenhengende arbeidsfri periode på 35 timer i løpet av 7 dager"
+      },
+      "reduced_rest": {
+        "minimum_hours": 8,
+        "requires_compensatory": true,
+        "compensatory_deadline_hours": 168,
+        "description": "Hvilen kan reduseres til 8 timer ved skriftlig avtale, med kompenserende hvile"
+      }
+    },
+    "section_10_4": {
+      "name": "Søndagsarbeid",
+      "max_consecutive_sundays": 3,
+      "requires_local_agreement_beyond": true,
+      "description": "Arbeidstaker som har utført søndagsarbeid, skal ha fri følgende søndag"
+    },
+    "section_4_3": {
+      "name": "Psykososialt arbeidsmiljø",
+      "description": "Arbeidet skal tilrettelegges slik at arbeidstakers integritet og verdighet ivaretas"
+    }
+  },
+
+  "hta": {
+    "version": "2024-2026",
+    "weekly_hours": {
+      "standard": 35.5,
+      "night_shift": 33.6,
+      "description": "Ordinær arbeidstid for turnusarbeidere"
+    },
+    "shift_definitions": {
+      "D": {"name": "Dagvakt", "typical_start": "07:00", "typical_end": "15:00"},
+      "A": {"name": "Aftenvakt", "typical_start": "14:30", "typical_end": "22:00"},
+      "N": {"name": "Nattvakt", "typical_start": "21:30", "typical_end": "07:30"}
+    }
+  },
+
+  "fatigue_coefficients": {
+    "version": "2026.1",
+    "source": "Norwegian Institute of Occupational Health",
+    "multipliers": {
+      "short_rest_under_11h": {
+        "value": 1.94,
+        "legal_reference": "AML § 10-8",
+        "description": "Violation of daily rest requirement"
+      },
+      "backward_rotation": {
+        "value": 0.49,
+        "patterns": ["N->A", "N->D", "A->D"],
+        "description": "Night to Evening, Night to Day, or Evening to Day transitions"
+      },
+      "successive_nights": {
+        "value": 0.68,
+        "per_night_after": 1,
+        "description": "Cumulative risk for consecutive night shifts"
+      },
+      "night_shift_base": {
+        "value": 0.22,
+        "applies_to": ["N"],
+        "description": "Base health risk multiplier for any night shift"
+      }
+    },
+    "thresholds": {
+      "low_risk": {"max": 2.0, "color": "green"},
+      "moderate_risk": {"min": 2.0, "max": 4.0, "color": "yellow"},
+      "high_risk": {"min": 4.0, "max": 6.0, "color": "orange"},
+      "critical_risk": {"min": 6.0, "color": "red"}
+    }
+  },
+
+  "shift_codes": {
+    "standard": {
+      "D1": {"start": "07:00", "end": "15:00", "type": "day"},
+      "D2": {"start": "07:30", "end": "15:30", "type": "day"},
+      "D3": {"start": "08:00", "end": "16:00", "type": "day"},
+      "A1": {"start": "14:30", "end": "22:00", "type": "evening"},
+      "A2": {"start": "15:00", "end": "22:30", "type": "evening"},
+      "A3": {"start": "15:00", "end": "23:00", "type": "evening"},
+      "N1": {"start": "21:30", "end": "07:30", "type": "night"},
+      "N2": {"start": "22:00", "end": "08:00", "type": "night"},
+      "N3": {"start": "22:30", "end": "07:00", "type": "night"},
+      "L": {"start": null, "end": null, "type": "leave"},
+      "F": {"start": null, "end": null, "type": "off"},
+      "FRI": {"start": null, "end": null, "type": "off"}
+    },
+    "absence_codes": {
+      "S": "Sykmeldt",
+      "SYK": "Sykmeldt",
+      "ES": "Egenmelding syk",
+      "P": "Permisjon",
+      "FE": "Ferie",
+      "K": "Kurs"
+    }
+  },
+
+  "validation": {
+    "required_columns": ["employee_id", "date", "shift_code"],
+    "optional_columns": ["name", "department", "position", "notes"],
+    "date_formats": ["%Y-%m-%d", "%d.%m.%Y", "%d/%m/%Y", "%d-%m-%Y"],
+    "employee_id_patterns": ["^\\d{6,11}$", "^[A-Z]{2,3}\\d{4,6}$"]
+  },
+
+  "mapping_states": {
+    "MAPPING_REQUIRED": "Unknown shift code encountered - manual mapping needed",
+    "VALIDATION_WARNING": "Data quality issue detected - human verification recommended",
+    "COMPLIANCE_BREACH": "Legal threshold exceeded - audit trail created"
+  }
+}
