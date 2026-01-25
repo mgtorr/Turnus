@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FluentFlow AI - Your Personal Language Tutor</title>
+    <meta name="description" content="Master any language with FluentFlow AI. Personalized learning plans, interactive lessons, and real-time pronunciation feedback." />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://fluentflow.ai/" />
+    <meta property="og:title" content="FluentFlow AI - Level Up Your Language Skills" />
+    <meta property="og:description" content="AI-powered language learning tailored to your goals. Start your journey today!" />
+    <meta property="og:image" content="https://fluentflow.ai/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://fluentflow.ai/" />
+    <meta property="twitter:title" content="FluentFlow AI - Your Personal Tutor" />
+    <meta property="twitter:description" content="Master any language with FluentFlow AI. Personalized learning plans, interactive lessons, and real-time pronunciation feedback." />
+    <meta property="twitter:image" content="https://fluentflow.ai/og-image.jpg" />
+    <meta name="theme-color" content="#030712" />
+
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'bg-primary': '#030712',
+              'bg-secondary': '#0a1628',
+              'bg-tertiary': '#1e3a5f',
+              'accent-primary': '#06b6d4',
+              'accent-secondary': '#14b8a6',
+              'accent-warm': '#f59e0b',
+            },
+            fontFamily: {
+              sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            },
+            animation: {
+              'fade-in': 'fade-in 0.3s ease-out',
+              'fade-in-up': 'fade-in-up 0.4s ease-out',
+              'fade-out': 'fade-out 0.2s ease-out',
+              'pulse-slow': 'pulse-slow 4s ease-in-out infinite',
+              'shimmer': 'shimmer 2s infinite',
+            },
+            keyframes: {
+              'fade-in': {
+                from: { opacity: '0' },
+                to: { opacity: '1' },
+              },
+              'fade-in-up': {
+                from: { opacity: '0', transform: 'translateY(20px)' },
+                to: { opacity: '1', transform: 'translateY(0)' },
+              },
+              'fade-out': {
+                from: { opacity: '1' },
+                to: { opacity: '0' },
+              },
+              'pulse-slow': {
+                '0%, 100%': { opacity: '0.6' },
+                '50%': { opacity: '0.8' },
+              },
+              'shimmer': {
+                '0%': { backgroundPosition: '-200% 0' },
+                '100%': { backgroundPosition: '200% 0' },
+              },
+            },
+          },
+        },
+      }
+    </script>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "react/": "https://aistudiocdn.com/react@^19.2.0/",
+        "react": "https://aistudiocdn.com/react@^19.2.0",
+        "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+        "@google/genai": "https://aistudiocdn.com/@google/genai@^1.28.0"
+      }
+    }
+    </script>
+
+    <style>
+      /* Base styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: #030712;
+        color: #f0f9ff;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Floating animations */
+      @keyframes float {
+        0%, 100% { transform: translateY(0) translateX(0); }
+        25% { transform: translateY(-20px) translateX(10px); }
+        50% { transform: translateY(-10px) translateX(-10px); }
+        75% { transform: translateY(-30px) translateX(5px); }
+      }
+
+      .floating-orb {
+        animation: float 20s ease-in-out infinite;
+      }
+
+      .floating-orb-delayed {
+        animation: float 25s ease-in-out infinite;
+        animation-delay: -5s;
+      }
+
+      /* Custom scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(6, 182, 212, 0.3);
+        border-radius: 4px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(6, 182, 212, 0.5);
+      }
+
+      /* Selection */
+      ::selection {
+        background-color: rgba(6, 182, 212, 0.4);
+        color: white;
+      }
+
+      /* Text gradient utility */
+      .text-gradient {
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .text-gradient-gold {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
+
+    <link rel="stylesheet" href="/styles/globals.css">
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

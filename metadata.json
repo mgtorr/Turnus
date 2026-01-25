@@ -1,0 +1,7 @@
+{
+  "name": "FluentFlow AI",
+  "description": "FluentFlow is your intelligent language companion. Master new languages with personalized plans, AI tutoring, and interactive practice sessions designed to keep you in the flow of learning.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
