@@ -1,0 +1,50 @@
+{
+  "version": "1.0.0",
+  "description": "Standard vaktkoder for helseinstitusjoner",
+  "institutions": {
+    "default": {
+      "name": "Standard sykehus",
+      "codes": {
+        "D1": {"name": "Dagvakt", "start": "07:00", "end": "15:00", "duration_hours": 8, "type": "day"},
+        "D2": {"name": "Lang dag", "start": "07:00", "end": "19:00", "duration_hours": 12, "type": "day"},
+        "A1": {"name": "Ettermiddag", "start": "14:00", "end": "22:00", "duration_hours": 8, "type": "evening"},
+        "A2": {"name": "Lang ettermiddag", "start": "12:00", "end": "22:00", "duration_hours": 10, "type": "evening"},
+        "N1": {"name": "Natt", "start": "21:00", "end": "07:00", "duration_hours": 10, "type": "night"},
+        "N2": {"name": "Kort natt", "start": "23:00", "end": "07:00", "duration_hours": 8, "type": "night"},
+        "H": {"name": "Helg", "start": "07:00", "end": "19:00", "duration_hours": 12, "type": "weekend"},
+        "F": {"name": "Fri", "start": null, "end": null, "duration_hours": 0, "type": "off"},
+        "S": {"name": "Syk", "start": null, "end": null, "duration_hours": 0, "type": "sick"},
+        "P": {"name": "Permisjon", "start": null, "end": null, "duration_hours": 0, "type": "leave"},
+        "U": {"name": "Utdanning", "start": null, "end": null, "duration_hours": 0, "type": "training"}
+      }
+    },
+    "sykehus_nord": {
+      "name": "Sykehus Nord",
+      "codes": {
+        "D": {"name": "Dag", "start": "08:00", "end": "16:00", "duration_hours": 8, "type": "day"},
+        "E": {"name": "Ettermiddag", "start": "15:00", "end": "23:00", "duration_hours": 8, "type": "evening"},
+        "N": {"name": "Natt", "start": "23:00", "end": "08:00", "duration_hours": 9, "type": "night"},
+        "L": {"name": "Langvakt", "start": "08:00", "end": "20:00", "duration_hours": 12, "type": "day"},
+        "F": {"name": "Fri", "start": null, "end": null, "duration_hours": 0, "type": "off"}
+      }
+    },
+    "kommune_bergen": {
+      "name": "Bergen kommune",
+      "codes": {
+        "DV": {"name": "Dagvakt", "start": "07:30", "end": "15:30", "duration_hours": 8, "type": "day"},
+        "EV": {"name": "Kveldsvakt", "start": "15:00", "end": "23:00", "duration_hours": 8, "type": "evening"},
+        "NV": {"name": "Nattvakt", "start": "23:00", "end": "07:30", "duration_hours": 8.5, "type": "night"},
+        "HV": {"name": "Helgevakt", "start": "08:00", "end": "20:00", "duration_hours": 12, "type": "weekend"},
+        "X": {"name": "Fri", "start": null, "end": null, "duration_hours": 0, "type": "off"}
+      }
+    }
+  },
+  "rules": {
+    "aml_daily_rest": {"hours": 11, "paragraph": "AML § 10-8"},
+    "aml_weekly_rest": {"hours": 35, "paragraph": "AML § 10-8"},
+    "max_consecutive_sundays": 3,
+    "max_weekly_hours": {"hta": 35.5, "hard_limit": 48},
+    "max_consecutive_nights": 4,
+    "backward_rotation_penalty": true
+  }
+}
