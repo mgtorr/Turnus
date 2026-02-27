@@ -178,25 +178,56 @@ elif page == "🔮 Simulator":
         
         # Risikoscore
         risk = result['risk_score']
+        
+        # HTA/AML spesifikke scores
+        st.markdown("### Compliance-score")
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
             color = "🟢" if risk['level'] == 'low' else "🟡" if risk['level'] == 'medium' else "🔴"
-            st.metric(f"{color} Risikonivå", risk['level'].upper())
+            st.metric(f"{color} Total risiko", risk['level'].upper())
         with col2:
-            st.metric("Kritiske brudd", risk['critical_count'])
+            st.metric("AML-brudd", risk['aml_violations'])
         with col3:
-            st.metric("Advarsler", risk['warning_count'])
+            st.metric("HTA-brudd", risk['hta_violations'])
         with col4:
-            st.metric("Info", risk['info_count'])
+            st.metric("Kritiske", risk['critical_count'])
         
         # Compliance status
-        if result['compliant']:
-            st.success("✅ Ingen kritiske regelbrudd funnet!")
-        else:
-            st.error(f"❌ {risk['critical_count']} kritiske regelbrudd må rettes")
+        col1, col2 = st.columns(2)
+        with col1:
+            if result['compliant']:
+                st.success("✅ AML: Ingen kritiske brudd")
+            else:
+                st.error(f"❌ AML: {risk['critical_count']} kritiske brudd")
         
-        # Violations
+        with col2:
+            if result.get('hta_compliant', True):
+                st.success("✅ HTA: Ingen kritiske brudd")
+            else:
+                st.warning(f"⚠️ HTA: {risk['hta_violations']} brudd funnet")
+        
+        # Vis HTA-spesifikke violations separat
+        if result.get('hta_violations', 0) > 0:
+            st.markdown("### HTA-avvik (Hovedtariffavtalen)")
+            hta_v = [v for v in result['violations'] if v.paragraph and 'HTA' in v.paragraph]
+            for v in hta_v:
+                severity_icon = "🔴" if v.severity == 'critical' else "🟡" if v.severity == 'warning' else "🔵"
+                with st.expander(f"{severity_icon} {v.type}: {v.description}"):
+                    st.write(f"**Paragraf:** {v.paragraph or 'N/A'}")
+                    if v.shift1:
+                        st.write(f"**Vakt:** {v.shift1.employee_id} - {v.shift1.date.strftime('%Y-%m-%d')} ({v.shift1.code})")
+        
+        # Vis AML-violations
+        if result.get('aml_violations', 0) > 0:
+            st.markdown("### AML-avvik (Arbeidsmiljøloven)")
+            aml_v = [v for v in result['violations'] if v.paragraph and 'AML' in v.paragraph]
+            for v in aml_v:
+                severity_icon = "🔴" if v.severity == 'critical' else "🟡" if v.severity == 'warning' else "🔵"
+                with st.expander(f"{severity_icon} {v.type}: {v.description}"):
+                    st.write(f"**Paragraf:** {v.paragraph or 'N/A'}")
+                    if v.shift1:
+                        st.write(f"**Vakt:** {v.shift1.employee_id} - {v.shift1.date.strftime('%Y-%m-%d')} ({v.shift1.code})")
         if result['violations']:
             st.markdown("### Regelbrudd")
             

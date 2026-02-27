@@ -45,8 +45,8 @@ def test_simulator():
     result = sim.simulate_schedule(shifts)
     
     # Skal finne daily_rest violation
-    violations = [v for v in result['violations'] if v.type == 'daily_rest']
-    assert len(violations) > 0, "Skal finne kort hviletid"
+    violations = [v for v in result['violations'] if 'daily_rest' in v.type]
+    assert len(violations) > 0, f"Skal finne kort hviletid. Fant: {[v.type for v in result['violations']]}"
     
     print(f"✅ Simulator OK (fant {len(violations)} hvile-brudd)")
 

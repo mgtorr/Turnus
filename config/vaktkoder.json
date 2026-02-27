@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "description": "Standard vaktkoder for helseinstitusjoner",
+  "version": "2.0.0",
+  "description": "Standard vaktkoder for helseinstitusjoner med full HTA-støtte",
   "institutions": {
     "default": {
       "name": "Standard sykehus",
@@ -15,7 +15,8 @@
         "F": {"name": "Fri", "start": null, "end": null, "duration_hours": 0, "type": "off"},
         "S": {"name": "Syk", "start": null, "end": null, "duration_hours": 0, "type": "sick"},
         "P": {"name": "Permisjon", "start": null, "end": null, "duration_hours": 0, "type": "leave"},
-        "U": {"name": "Utdanning", "start": null, "end": null, "duration_hours": 0, "type": "training"}
+        "U": {"name": "Utdanning", "start": null, "end": null, "duration_hours": 0, "type": "training"},
+        "M": {"name": "Møte/admin", "start": "08:00", "end": "15:00", "duration_hours": 7, "type": "admin"}
       }
     },
     "sykehus_nord": {
@@ -40,11 +41,127 @@
     }
   },
   "rules": {
-    "aml_daily_rest": {"hours": 11, "paragraph": "AML § 10-8"},
-    "aml_weekly_rest": {"hours": 35, "paragraph": "AML § 10-8"},
-    "max_consecutive_sundays": 3,
-    "max_weekly_hours": {"hta": 35.5, "hard_limit": 48},
-    "max_consecutive_nights": 4,
-    "backward_rotation_penalty": true
+    "_comment": "Regler fra Arbeidsmiljøloven (AML) og Hovedtariffavtalen (HTA)",
+    
+    "aml_daily_rest": {
+      "hours": 11,
+      "paragraph": "AML § 10-8",
+      "description": "Daglig hvileperiode mellom vakter"
+    },
+    "aml_weekly_rest": {
+      "hours": 35,
+      "paragraph": "AML § 10-8",
+      "description": "Ukentlig sammenhengende hvile"
+    },
+    "aml_max_daily_hours": {
+      "hours": 13,
+      "paragraph": "AML § 10-5",
+      "description": "Maksimal daglig arbeidstid"
+    },
+    "aml_max_weekly_hours": {
+      "hours": 48,
+      "paragraph": "AML § 10-6",
+      "description": "Maksimal ukentlig arbeidstid"
+    },
+    
+    "hta_average_weekly": {
+      "hours": 35.5,
+      "averaging_period_weeks": 52,
+      "paragraph": "HTA kap 4, § 4.1",
+      "description": "Gjennomsnittlig uketid over 52 uker"
+    },
+    "hta_max_shift_length": {
+      "day": 12,
+      "night": 10,
+      "paragraph": "HTA kap 4, § 4.2",
+      "description": "Maksimal vaktlengde"
+    },
+    "hta_min_shift_length": {
+      "hours": 4,
+      "paragraph": "HTA kap 4, § 4.2",
+      "description": "Minimal vaktlengde"
+    },
+    "hta_consecutive_nights": {
+      "max": 3,
+      "paragraph": "HTA kap 4, § 4.3",
+      "description": "Maks påfølgende nattevakter"
+    },
+    "hta_rest_after_nights": {
+      "hours": 46,
+      "after_nights": 3,
+      "paragraph": "HTA kap 4, § 4.3",
+      "description": "Fri etter 3 nattevakter"
+    },
+    "hta_weekend_work": {
+      "max_every_nth_weekend": 2,
+      "paragraph": "HTA kap 4, § 4.4",
+      "description": "Helgearbeid hver 2. eller 3. helg"
+    },
+    "hta_free_weekend_after_nights": {
+      "enabled": true,
+      "paragraph": "HTA kap 4, § 4.4",
+      "description": "Fri helg etter nattevakter"
+    },
+    "hta_rotation": {
+      "preferred_direction": "forward",
+      "day_to_evening_hours": 11,
+      "evening_to_night_hours": 11,
+      "night_to_day_hours": 35,
+      "paragraph": "HTA kap 4, § 4.5",
+      "description": "Rotasjonsprinsipper"
+    },
+    "hta_overtime": {
+      "daily_threshold": 9,
+      "weekly_threshold": 40,
+      "max_per_week": 20,
+      "max_per_4_weeks": 50,
+      "paragraph": "HTA kap 5",
+      "description": "Overtidsgrenser"
+    },
+    "hta_extra_paid_days": {
+      "enabled": true,
+      "paragraph": "HTA kap 4, § 4.6",
+      "description": "Ekstra betalte fridager"
+    },
+    "hta_sunday_premium": {
+      "hours": 35.5,
+      "paragraph": "HTA kap 4, § 4.7",
+      "description": "Søndagstillegg etter 35.5t"
+    },
+    "hta_night_premium": {
+      "start": "21:00",
+      "end": "06:00",
+      "paragraph": "HTA kap 4, § 4.8",
+      "description": "Nattillegg"
+    },
+    "hta_evening_premium": {
+      "start": "18:00",
+      "end": "21:00",
+      "paragraph": "HTA kap 4, § 4.8",
+      "description": "Kveldstillegg"
+    },
+    "hta_weekend_premium": {
+      "saturday_start": "12:00",
+      "paragraph": "HTA kap 4, § 4.8",
+      "description": "Helgetillegg"
+    },
+    "hta_free_time_calculations": {
+      "enabled": true,
+      "paragraph": "HTA kap 4, § 4.9",
+      "description": "Fritidsberegninger"
+    },
+    "hta_continuous_shift": {
+      "max_hours": 8,
+      "paragraph": "HTA kap 4, § 4.10",
+      "description": "Sammenhengende arbeid uten pause"
+    }
+  },
+  
+  "hta_sections": {
+    "kap4": "Arbeidstid - dag- og nattjeneste",
+    "kap5": "Overtid",
+    "kap6": "Arbeid på søn- og helligdager",
+    "kap7": "Skift- og turnusarbeid",
+    "kap8": "Nattevakt"
   }
 }
