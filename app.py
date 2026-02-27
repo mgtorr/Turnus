@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from core.vaktkoder import VaktKodeManager, detect_institution_from_data
 from core.simulator import TurnusSimulator, Shift
 from core.analyzer import HistoricalAnalyzer
+from core.parser import GatParser, WideFormatParser, auto_detect_format
 
 st.set_page_config(page_title="Turnus", page_icon="🏥", layout="wide")
 
@@ -29,11 +30,34 @@ page = st.sidebar.radio("Navigasjon", [
 
 # --- Hjelpefunksjoner ---
 def load_data(uploaded_file):
-    """Last inn data fra Excel/CSV"""
+    """Last inn data fra Excel/CSV med auto-parsing"""
+    # Les rådata
     if uploaded_file.name.endswith('.csv'):
-        return pl.read_csv(uploaded_file)
+        df = pl.read_csv(uploaded_file)
     else:
-        return pl.read_excel(uploaded_file)
+        df = pl.read_excel(uploaded_file)
+    
+    # Auto-detekter format og parse
+    format_type = auto_detect_format(df)
+    
+    if format_type == "wide":
+        # Finn ansatt-kolonnen
+        emp_col = None
+        for col in df.columns:
+            if any(x in col.lower() for x in ["ansatt", "navn", "employee", "name"]):
+                emp_col = col
+                break
+        if not emp_col:
+            emp_col = df.columns[0]  # Bruk første kolonne
+        
+        parser = WideFormatParser()
+        df = parser.parse(df, employee_col=emp_col)
+    else:
+        # Long format - bruk GAT-parser
+        parser = GatParser()
+        df = parser.parse_dataframe(df)
+    
+    return df
 
 def parse_shift_data(df: pl.DataFrame, date_col: str, code_col: str, emp_col: str) -> list[Shift]:
     """Parse dataframe til Shift-objekter"""
@@ -85,14 +109,19 @@ elif page == "🔮 Simulator":
         uploaded = st.file_uploader("Last opp Excel/CSV", type=["xlsx", "csv"])
         
         if uploaded:
-            df = load_data(uploaded)
+            with st.spinner("Parser fil..."):
+                df = load_data(uploaded)
+            
+            # Vis parsing-info
+            st.info(f"📄 Rader: {len(df)} | Kolonner: {list(df.columns)}")
+            
             st.write("Forhåndsvisning:", df.head())
             
-            # Kolonne-mapping
+            # Kolonne-mapping (hvis ikke allerede standardisert)
             cols = df.columns
-            date_col = st.selectbox("Datokolonne", cols)
-            code_col = st.selectbox("Vaktkode-kolonne", cols)
-            emp_col = st.selectbox("Ansatt-ID kolonne", cols)
+            date_col = st.selectbox("Datokolonne", cols, index=cols.index("dato") if "dato" in cols else 0)
+            code_col = st.selectbox("Vaktkode-kolonne", cols, index=cols.index("vakt") if "vakt" in cols else 0)
+            emp_col = st.selectbox("Ansatt-ID kolonne", cols, index=cols.index("ansatt_id") if "ansatt_id" in cols else 0)
             
             if st.button("Kjør simulering"):
                 with st.spinner("Analyserer..."):
@@ -201,7 +230,10 @@ elif page == "📈 Historisk Analyse":
     uploaded = st.file_uploader("Last opp historiske data (Excel/CSV)", type=["xlsx", "csv"])
     
     if uploaded:
-        df = load_data(uploaded)
+        with st.spinner("Parser fil..."):
+            df = load_data(uploaded)
+        
+        st.info(f"📄 Rader: {len(df)} | Kolonner: {list(df.columns)}")
         st.write("Forhåndsvisning:", df.head())
         
         # Auto-detect institusjon
@@ -211,9 +243,9 @@ elif page == "📈 Historisk Analyse":
         
         # Kolonne-mapping
         cols = df.columns
-        date_col = st.selectbox("Datokolonne", cols, key="hist_date")
-        code_col = st.selectbox("Vaktkode-kolonne", cols, key="hist_code")
-        emp_col = st.selectbox("Ansatt-ID kolonne", cols, key="hist_emp")
+        date_col = st.selectbox("Datokolonne", cols, key="hist_date", index=cols.index("dato") if "dato" in cols else 0)
+        code_col = st.selectbox("Vaktkode-kolonne", cols, key="hist_code", index=cols.index("vakt") if "vakt" in cols else 0)
+        emp_col = st.selectbox("Ansatt-ID kolonne", cols, key="hist_emp", index=cols.index("ansatt_id") if "ansatt_id" in cols else 0)
         
         institution = st.selectbox(
             "Velg institusjon",
