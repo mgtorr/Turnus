@@ -31,6 +31,12 @@ class HistoricalAnalyzer:
             date_val = row[date_col]
             if isinstance(date_val, str):
                 date_val = datetime.strptime(date_val, "%Y-%m-%d")
+            elif hasattr(date_val, 'date') and callable(getattr(date_val, 'date')):
+                # Already datetime
+                pass
+            else:
+                # Convert date to datetime
+                date_val = datetime.combine(date_val, datetime.min.time())
             shifts.append(Shift(
                 date=date_val,
                 code=row[code_col],
